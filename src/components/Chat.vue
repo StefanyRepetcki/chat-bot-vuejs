@@ -5,7 +5,7 @@
                 v-for="(conversa, index) in this.conversation"
                 :key="index"
                 :id="`chat-${index}`"
-                :style="conversa.admin ? 'display:flex; justify-content:left' : 'display:flex; justify-content:right'">
+                :class="conversa.admin ? 'admin' : 'usuario'">
                 <v-card
                     class="mx-auto card"
                     :color="conversa.admin ? '#0F3460' : '#FBBB08'"
@@ -24,7 +24,7 @@
                     </v-card-title>
 
                     <v-card-text class="text-h2 font-weight-bold msg">
-                        {{conversa.msg}}
+                        <span>{{conversa.msg}}</span>
                     </v-card-text>
 
                     <v-card-actions>
@@ -46,6 +46,7 @@
                 <v-text-field
                     v-model="message"
                     outlined
+                    :disabled="disabled"
                     clearable
                     label="Mensagem"
                     v-on:keyup.enter="onEnter"
@@ -85,27 +86,48 @@ export default {
             message: '',
             loading: false,
             conversation: [],
+            disabled: false,
+            nomeAssistenteVirtual: 'Olivia',
+            ultimaPergunta: '',
         }
     },
     mounted() {
-        const today = new Date();
-        const date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
-        const time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-        const dateTime = date +' '+ time;
-        this.conversation.push({
-            admin: true,
-            avatar: 'https://avataaars.io/?avatarStyle=Transparent&topType=ShortHairShortCurly&accessoriesType=Prescription02&hairColor=Black&facialHairType=Blank&clotheType=Hoodie&clotheColor=White&eyeType=Default&eyebrowType=DefaultNatural&mouthType=Default&skinColor=Light',
-            nome: 'Barbara Frost',
-            msg: 'Olá, no que posso ajudar?',
-            data: dateTime,
-        });
+        let dataFuncion;
+        setTimeout(() => {
+            dataFuncion = this.dateNow();
+            this.conversation.unshift({
+                admin: true,
+                avatar: 'https://avataaars.io/?avatarStyle=Transparent&topType=ShortHairShortCurly&accessoriesType=Prescription02&hairColor=Black&facialHairType=Blank&clotheType=Hoodie&clotheColor=White&eyeType=Default&eyebrowType=DefaultNatural&mouthType=Default&skinColor=Light',
+                nome: this.nomeAssistenteVirtual,
+                msg: `Ola! Eu sou a ${this.nomeAssistenteVirtual}, serei a sua assistente virtual.`,
+                data: dataFuncion,
+            });
+        }, 1000);
+        setTimeout(() => {
+            this.ultimaPergunta = 'nome';
+            dataFuncion = this.dateNow();
+                this.conversation.unshift({
+                    admin: true,
+                    avatar: 'https://avataaars.io/?avatarStyle=Transparent&topType=ShortHairShortCurly&accessoriesType=Prescription02&hairColor=Black&facialHairType=Blank&clotheType=Hoodie&clotheColor=White&eyeType=Default&eyebrowType=DefaultNatural&mouthType=Default&skinColor=Light',
+                    nome: this.nomeAssistenteVirtual,
+                    msg: 'Qual é o seu nome?',
+                    data: dataFuncion,
+                });
+        }, 2000);
     },
     methods: {
+        dateNow() {
+            const today = new Date();
+            const date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+            const time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+            return date +' '+ time;
+        },
         onEnter: function() {
             if(this.message)
                 this.send();
         },
         send() {
+            const mensagemUsuario = this.message;
             this.loading = true;
             const today = new Date();
             const date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
@@ -121,6 +143,72 @@ export default {
             this.scroll();
             this.loading = false;
             this.message = '';
+            this.resposta(mensagemUsuario);
+        },
+        resposta(mensagemUsuario) {
+            let dataFuncion;
+            let primeiraMsgUsuario;
+            let proximaMsgUsuario;
+            let proximaPergunta;
+            switch(true) {
+                case mensagemUsuario.includes('nome') || this.ultimaPergunta.includes('nome'):
+                    primeiraMsgUsuario = `${mensagemUsuario}.. que nome lindo!`;
+                    proximaMsgUsuario = "Qual sua idade?";
+                    proximaPergunta = 'idade';
+                    break;
+                case mensagemUsuario.includes('idade') || this.ultimaPergunta.includes('idade'):
+                    primeiraMsgUsuario = `${mensagemUsuario}.. Esta na flor da idade!`;
+                    proximaMsgUsuario = "Você estuda alguma coisa?";
+                    proximaPergunta = 'estudo';
+                    break;
+                case mensagemUsuario.includes('estudo') || this.ultimaPergunta.includes('estudo'):
+                    if(mensagemUsuario.includes('nao')){
+                        primeiraMsgUsuario = "Que pena, estudar é sempre bom!";
+                    }else {
+                        primeiraMsgUsuario = "Que ótimo, estudar é sempre bom!";
+                    }
+                    proximaMsgUsuario = "Você trabalha atualmente?";
+                    proximaPergunta = 'trabalho';
+                    break;
+                case mensagemUsuario.includes('trabalho') || this.ultimaPergunta.includes('trabalho'):
+                    primeiraMsgUsuario = "Entendi!";
+                    proximaMsgUsuario = "Estou finalizando sua sessão, obrigada por conversar comigo! Até breve.";
+                    proximaPergunta = 'adeus';
+                    this.disabled = true;
+                    break;
+                case mensagemUsuario.includes('adeus') || this.ultimaPergunta.includes('adeus'):
+                    primeiraMsgUsuario = "Estou finalizando sua sessão, obrigada por conversar comigo! Até breve.";
+                    proximaPergunta = '';
+                    this.disabled = true;
+                    break;
+                default:
+                    primeiraMsgUsuario = "Não entendi poderia repetir novamente com outras palavaras para que eu possa lhe ajudar.";
+                    break;
+            }
+            this.ultimaPergunta = proximaPergunta;
+            setTimeout(() => {
+                dataFuncion = this.dateNow();
+                    this.conversation.unshift({
+                        admin: true,
+                        avatar: 'https://avataaars.io/?avatarStyle=Transparent&topType=ShortHairShortCurly&accessoriesType=Prescription02&hairColor=Black&facialHairType=Blank&clotheType=Hoodie&clotheColor=White&eyeType=Default&eyebrowType=DefaultNatural&mouthType=Default&skinColor=Light',
+                        nome: this.nomeAssistenteVirtual,
+                        msg: primeiraMsgUsuario,
+                        data: dataFuncion,
+                    });
+            }, 1000);
+            if(proximaPergunta && proximaMsgUsuario) {
+                console.log(proximaPergunta);
+                setTimeout(() => {
+                    dataFuncion = this.dateNow();
+                        this.conversation.unshift({
+                            admin: true,
+                            avatar: 'https://avataaars.io/?avatarStyle=Transparent&topType=ShortHairShortCurly&accessoriesType=Prescription02&hairColor=Black&facialHairType=Blank&clotheType=Hoodie&clotheColor=White&eyeType=Default&eyebrowType=DefaultNatural&mouthType=Default&skinColor=Light',
+                            nome: this.nomeAssistenteVirtual,
+                            msg: proximaMsgUsuario,
+                            data: dataFuncion,
+                        });
+                }, 2000);
+            }
         },
         scroll() {
             let element = document.getElementById('scroll');
@@ -150,6 +238,18 @@ export default {
         overflow-y: auto;
         display: flex;
         flex-direction: column-reverse;
+        padding: 0 2%;
+    }
+    .admin {
+        display: flex;
+        justify-content: left;
+    }
+    .usuario {
+        display: flex;
+        justify-content: right;
+    }
+    .usuario span {
+        color: #0F3460;
     }
     .card {
         margin-bottom: 20px;
