@@ -65,6 +65,7 @@
                             width="24"
                             height="24"
                             color="green darken-2"
+                            v-on:click="send()"
                         >
                             mdi-send
                         </v-icon>
@@ -101,6 +102,9 @@ export default {
     },
     methods: {
         onEnter: function() {
+            this.send();
+        },
+        send() {
             this.loading = true;
             const today = new Date();
             const date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
@@ -113,7 +117,7 @@ export default {
                 msg: this.message,
                 data: dateTime,
             });
-            this.scroll();
+            this.scroll('scroll');
             this.loading = false;
             this.message = '';
         },
