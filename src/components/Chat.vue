@@ -89,31 +89,13 @@ export default {
             disabled: false,
             nomeAssistenteVirtual: 'Olivia',
             ultimaPergunta: '',
+            avatarBot: 'https://avataaars.io/?avatarStyle=Transparent&topType=ShortHairShortCurly&accessoriesType=Prescription02&hairColor=Black&facialHairType=Blank&clotheType=Hoodie&clotheColor=White&eyeType=Default&eyebrowType=DefaultNatural&mouthType=Default&skinColor=Light',
         }
     },
     mounted() {
-        let dataFuncion;
-        setTimeout(() => {
-            dataFuncion = this.dateNow();
-            this.conversation.unshift({
-                admin: true,
-                avatar: 'https://avataaars.io/?avatarStyle=Transparent&topType=ShortHairShortCurly&accessoriesType=Prescription02&hairColor=Black&facialHairType=Blank&clotheType=Hoodie&clotheColor=White&eyeType=Default&eyebrowType=DefaultNatural&mouthType=Default&skinColor=Light',
-                nome: this.nomeAssistenteVirtual,
-                msg: `Ola! Eu sou a ${this.nomeAssistenteVirtual}, serei a sua assistente virtual.`,
-                data: dataFuncion,
-            });
-        }, 1000);
-        setTimeout(() => {
-            this.ultimaPergunta = 'nome';
-            dataFuncion = this.dateNow();
-                this.conversation.unshift({
-                    admin: true,
-                    avatar: 'https://avataaars.io/?avatarStyle=Transparent&topType=ShortHairShortCurly&accessoriesType=Prescription02&hairColor=Black&facialHairType=Blank&clotheType=Hoodie&clotheColor=White&eyeType=Default&eyebrowType=DefaultNatural&mouthType=Default&skinColor=Light',
-                    nome: this.nomeAssistenteVirtual,
-                    msg: 'Qual é o seu nome?',
-                    data: dataFuncion,
-                });
-        }, 2000);
+        this.adicionarChatBox(true, this.avatarBot, this.nomeAssistenteVirtual, `Ola! Eu sou a ${this.nomeAssistenteVirtual}, serei a sua assistente virtual.`, 1000);
+        this.adicionarChatBox(true, this.avatarBot, this.nomeAssistenteVirtual, 'Qual é o seu nome?', 2000);
+        this.ultimaPergunta = 'nome';
     },
     methods: {
         dateNow() {
@@ -122,31 +104,31 @@ export default {
             const time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
             return date +' '+ time;
         },
+        adicionarChatBox(admin, avatar, nome, msg, time) {
+            setTimeout(() => {
+                const dataFuncion = this.dateNow();
+                    this.conversation.unshift({
+                        admin: admin,
+                        avatar: avatar,
+                        nome: nome,
+                        msg: msg,
+                        data: dataFuncion,
+                    });
+            }, time);
+        },
         onEnter: function() {
-            if(this.message)
-                this.send();
+            !!this.message && this.send();
         },
         send() {
-            const mensagemUsuario = this.message;
             this.loading = true;
-            const today = new Date();
-            const date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
-            const time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-            const dateTime = date +' '+ time;
-            this.conversation.unshift({
-                admin: false,
-                avatar: 'https://avataaars.io/?avatarStyle=Transparent&topType=ShortHairShortCurly&accessoriesType=Prescription02&hairColor=Black&facialHairType=Blank&clotheType=Hoodie&clotheColor=White&eyeType=Default&eyebrowType=DefaultNatural&mouthType=Default&skinColor=Light',
-                nome: 'Você',
-                msg: this.message,
-                data: dateTime,
-            });
+            const mensagemUsuario = this.message;
+            this.adicionarChatBox(false, this.avatarBot, 'Você', this.message, 0);
             this.scroll();
-            this.loading = false;
             this.message = '';
             this.resposta(mensagemUsuario);
+            this.loading = false;
         },
         resposta(mensagemUsuario) {
-            let dataFuncion;
             let primeiraMsgUsuario;
             let proximaMsgUsuario;
             let proximaPergunta;
@@ -162,11 +144,7 @@ export default {
                     proximaPergunta = 'estudo';
                     break;
                 case mensagemUsuario.includes('estudo') || this.ultimaPergunta.includes('estudo'):
-                    if(mensagemUsuario.includes('nao')){
-                        primeiraMsgUsuario = "Que pena, estudar é sempre bom!";
-                    }else {
-                        primeiraMsgUsuario = "Que ótimo, estudar é sempre bom!";
-                    }
+                    primeiraMsgUsuario = mensagemUsuario.includes('sim') ? "Que ótimo, estudar é sempre bom!" : "Que pena, estudar é sempre bom!";
                     proximaMsgUsuario = "Você trabalha atualmente?";
                     proximaPergunta = 'trabalho';
                     break;
@@ -186,28 +164,10 @@ export default {
                     break;
             }
             this.ultimaPergunta = proximaPergunta;
-            setTimeout(() => {
-                dataFuncion = this.dateNow();
-                    this.conversation.unshift({
-                        admin: true,
-                        avatar: 'https://avataaars.io/?avatarStyle=Transparent&topType=ShortHairShortCurly&accessoriesType=Prescription02&hairColor=Black&facialHairType=Blank&clotheType=Hoodie&clotheColor=White&eyeType=Default&eyebrowType=DefaultNatural&mouthType=Default&skinColor=Light',
-                        nome: this.nomeAssistenteVirtual,
-                        msg: primeiraMsgUsuario,
-                        data: dataFuncion,
-                    });
-            }, 1000);
+            this.adicionarChatBox(true, this.avatarBot, this.nomeAssistenteVirtual, primeiraMsgUsuario, 1000);
             if(proximaPergunta && proximaMsgUsuario) {
                 console.log(proximaPergunta);
-                setTimeout(() => {
-                    dataFuncion = this.dateNow();
-                        this.conversation.unshift({
-                            admin: true,
-                            avatar: 'https://avataaars.io/?avatarStyle=Transparent&topType=ShortHairShortCurly&accessoriesType=Prescription02&hairColor=Black&facialHairType=Blank&clotheType=Hoodie&clotheColor=White&eyeType=Default&eyebrowType=DefaultNatural&mouthType=Default&skinColor=Light',
-                            nome: this.nomeAssistenteVirtual,
-                            msg: proximaMsgUsuario,
-                            data: dataFuncion,
-                        });
-                }, 2000);
+                this.adicionarChatBox(true, this.avatarBot, this.nomeAssistenteVirtual, proximaMsgUsuario, 2000);
             }
         },
         scroll() {
