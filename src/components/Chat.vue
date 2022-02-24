@@ -134,6 +134,7 @@ export default {
           msg: msg,
           data: dataFuncion,
         });
+        this.scroll();
       }, time);
     },
     onEnter: function () {
@@ -144,7 +145,6 @@ export default {
       const mensagemUsuario = this.message;
       this.podeEscrever &&
         this.adicionarChatBox(false, this.avatarBot, "Você", this.message, 0);
-      this.scroll();
       this.podeEscrever = false;
       this.disabled = true;
       this.message = "";
@@ -213,7 +213,6 @@ export default {
         this.disabled = this.ultimaPergunta.includes("adeus") ? true : false;
         this.podeEscrever = true;
         this.focusTime();
-        this.scroll();
       }, 2000);
     },
     focusTime() {
