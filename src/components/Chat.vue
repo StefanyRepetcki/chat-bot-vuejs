@@ -111,20 +111,24 @@ export default {
             const date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
             const time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
             const dateTime = date +' '+ time;
-            this.conversation.push({
+            this.conversation.unshift({
                 admin: false,
                 avatar: 'https://avataaars.io/?avatarStyle=Transparent&topType=ShortHairShortCurly&accessoriesType=Prescription02&hairColor=Black&facialHairType=Blank&clotheType=Hoodie&clotheColor=White&eyeType=Default&eyebrowType=DefaultNatural&mouthType=Default&skinColor=Light',
                 nome: 'Você',
                 msg: this.message,
                 data: dateTime,
             });
-            this.scroll('scroll');
+            this.scroll();
             this.loading = false;
             this.message = '';
         },
-        scroll(id) {
-            let element = document.getElementById(id);
-            element.scrollTop = element.scrollHeight - element.clientHeight;
+        scroll() {
+            let element = document.getElementById('scroll');
+            if(element.scrollTop > 0)
+                console.log("RESET TO BOTTOM CHAT - NO REMOVE THIS LOG");
+                setTimeout(() => {
+                    element.scrollTop = 0;
+                }, 50);
         },
     }
 }
@@ -144,7 +148,8 @@ export default {
     }
     .conversation {
         overflow-y: auto;
-        scroll-behavior: smooth;
+        display: flex;
+        flex-direction: column-reverse;
     }
     .card {
         margin-bottom: 20px;
