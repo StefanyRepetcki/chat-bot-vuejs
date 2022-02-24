@@ -49,6 +49,7 @@
             label="Mensagem"
             v-on:keyup.enter="onEnter"
             type="text"
+            id="inputEnviar"
             class="text-flex"
           >
             <template v-slot:append>
@@ -93,6 +94,7 @@ export default {
     };
   },
   mounted() {
+    document.getElementById("inputEnviar").focus();
     this.adicionarChatBox(
       true,
       this.avatarBot,
@@ -142,48 +144,44 @@ export default {
       const mensagemUsuario = this.message;
       this.podeEscrever &&
         this.adicionarChatBox(false, this.avatarBot, "Você", this.message, 0);
+      this.scroll();
       this.podeEscrever = false;
       this.disabled = true;
-      this.scroll();
       this.message = "";
       this.resposta(mensagemUsuario);
       this.loading = false;
+      this.scroll();
     },
     resposta(mensagemUsuario) {
       let primeiraMsgUsuario;
       let proximaMsgUsuario;
       let proximaPergunta;
       switch (true) {
-        case mensagemUsuario.includes("nome") ||
-          this.ultimaPergunta.includes("nome"):
+        case this.ultimaPergunta.includes("nome"):
           primeiraMsgUsuario = `${mensagemUsuario}.. que nome lindo!`;
           proximaMsgUsuario = "Qual sua idade?";
           proximaPergunta = "idade";
           break;
-        case mensagemUsuario.includes("idade") ||
-          this.ultimaPergunta.includes("idade"):
+        case this.ultimaPergunta.includes("idade"):
           primeiraMsgUsuario = `${mensagemUsuario}.. Esta na flor da idade!`;
           proximaMsgUsuario = "Você estuda alguma coisa?";
           proximaPergunta = "estudo";
           break;
-        case mensagemUsuario.includes("estudo") ||
-          this.ultimaPergunta.includes("estudo"):
+        case this.ultimaPergunta.includes("estudo"):
           primeiraMsgUsuario = mensagemUsuario.includes("sim")
             ? "Que ótimo, estudar é sempre bom!"
             : "Que pena, estudar é sempre bom!";
           proximaMsgUsuario = "Você trabalha atualmente?";
           proximaPergunta = "trabalho";
           break;
-        case mensagemUsuario.includes("trabalho") ||
-          this.ultimaPergunta.includes("trabalho"):
+        case this.ultimaPergunta.includes("trabalho"):
           primeiraMsgUsuario = "Entendi!";
           proximaMsgUsuario =
             "Estou finalizando sua sessão, obrigada por conversar comigo! Até breve.";
           proximaPergunta = "adeus";
           this.disabled = true;
           break;
-        case mensagemUsuario.includes("adeus") ||
-          this.ultimaPergunta.includes("adeus"):
+        case this.ultimaPergunta.includes("adeus"):
           primeiraMsgUsuario =
             "Estou finalizando sua sessão, obrigada por conversar comigo! Até breve.";
           proximaPergunta = "";
@@ -215,11 +213,14 @@ export default {
       setTimeout(() => {
         this.podeEscrever = true;
         this.disabled = this.ultimaPergunta.includes("adeus") ? true : false;
+        if (!this.disabled) {
+          document.getElementById("inputEnviar").focus();
+        }
       }, 2000);
     },
     scroll() {
       let element = document.getElementById("scroll");
-      if (element.scrollTop > 0) {
+      if (element.scrollTop !== 0) {
         console.log("RESET TO BOTTOM CHAT - NO REMOVE THIS LOG");
         setTimeout(() => {
           element.scrollTop = 0;
