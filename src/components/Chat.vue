@@ -102,7 +102,8 @@ export default {
     },
     methods: {
         onEnter: function() {
-            this.send();
+            if(this.message)
+                this.send();
         },
         send() {
             this.loading = true;
