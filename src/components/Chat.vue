@@ -150,7 +150,6 @@ export default {
       this.message = "";
       this.resposta(mensagemUsuario);
       this.loading = false;
-      this.scroll();
     },
     resposta(mensagemUsuario) {
       let primeiraMsgUsuario;
@@ -214,6 +213,7 @@ export default {
         this.disabled = this.ultimaPergunta.includes("adeus") ? true : false;
         this.podeEscrever = true;
         this.focusTime();
+        this.scroll();
       }, 2000);
     },
     focusTime() {
