@@ -94,7 +94,6 @@ export default {
     };
   },
   mounted() {
-    document.getElementById("inputEnviar").focus();
     this.adicionarChatBox(
       true,
       this.avatarBot,
@@ -110,6 +109,7 @@ export default {
       2000
     );
     this.ultimaPergunta = "nome";
+    this.focusTime();
   },
   methods: {
     dateNow() {
@@ -211,12 +211,13 @@ export default {
         );
       }
       setTimeout(() => {
-        this.podeEscrever = true;
         this.disabled = this.ultimaPergunta.includes("adeus") ? true : false;
-        if (!this.disabled) {
-          document.getElementById("inputEnviar").focus();
-        }
+        this.podeEscrever = true;
+        this.focusTime();
       }, 2000);
+    },
+    focusTime() {
+      document.getElementById("inputEnviar").focus();
     },
     scroll() {
       let element = document.getElementById("scroll");
