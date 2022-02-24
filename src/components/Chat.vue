@@ -89,6 +89,7 @@ export default {
       nomeAssistenteVirtual: "Olivia",
       ultimaPergunta: "",
       podeEscrever: true,
+      avatarWoman: "https://avataaars.io",
       avatarBot:
         "https://avataaars.io/?avatarStyle=Transparent&topType=ShortHairShortCurly&accessoriesType=Prescription02&hairColor=Black&facialHairType=Blank&clotheType=Hoodie&clotheColor=White&eyeType=Default&eyebrowType=DefaultNatural&mouthType=Default&skinColor=Light",
     };
@@ -96,14 +97,14 @@ export default {
   mounted() {
     this.adicionarChatBox(
       true,
-      this.avatarBot,
+      this.avatarWoman,
       this.nomeAssistenteVirtual,
       `Ola! Eu sou a ${this.nomeAssistenteVirtual}, serei a sua assistente virtual.`,
       1000
     );
     this.adicionarChatBox(
       true,
-      this.avatarBot,
+      this.avatarWoman,
       this.nomeAssistenteVirtual,
       "Qual é o seu nome?",
       2000
@@ -194,7 +195,7 @@ export default {
       this.ultimaPergunta = proximaPergunta;
       this.adicionarChatBox(
         true,
-        this.avatarBot,
+        this.avatarWoman,
         this.nomeAssistenteVirtual,
         primeiraMsgUsuario,
         1000
@@ -203,7 +204,7 @@ export default {
         console.log(proximaPergunta);
         this.adicionarChatBox(
           true,
-          this.avatarBot,
+          this.avatarWoman,
           this.nomeAssistenteVirtual,
           proximaMsgUsuario,
           2000
