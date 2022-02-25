@@ -156,6 +156,7 @@ export default {
       let primeiraMsgUsuario;
       let proximaMsgUsuario;
       let proximaPergunta;
+      const msgLower = mensagemUsuario.toLowerCase();
       switch (true) {
         case this.ultimaPergunta.includes("nome"):
           primeiraMsgUsuario = `${mensagemUsuario}.. que nome lindo!`;
@@ -168,7 +169,7 @@ export default {
           proximaPergunta = "estudo";
           break;
         case this.ultimaPergunta.includes("estudo"):
-          primeiraMsgUsuario = mensagemUsuario.includes("sim")
+          primeiraMsgUsuario = msgLower.includes("sim")
             ? "Que ótimo, estudar é sempre bom!"
             : "Que pena, estudar é sempre bom!";
           proximaMsgUsuario = "Você trabalha atualmente?";
