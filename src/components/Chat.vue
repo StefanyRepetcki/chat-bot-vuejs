@@ -1,25 +1,11 @@
 <template>
   <div class="container-chat">
-    <div class="conversation" id="scroll">
-      <div
-        v-for="(conversa, index) in this.conversation"
-        :key="index"
-        :id="`chat-${index}`"
-        :class="conversa.admin ? 'admin' : 'usuario'"
-      >
-        <v-card
-          class="mx-auto card"
-          :color="conversa.admin ? '#0F3460' : '#FBBB08'"
-          dark
-          width="400"
-        >
+    <div class="conversation" ref="scroll">
+      <div v-for="(conversa, index) in conversation" :key="index" :class="{'admin': conversa.admin, 'usuario': !conversa.admin}">
+        <v-card class="mx-auto card" :color="conversa.admin ? '#0F3460' : '#FBBB08'" dark width="400">
           <v-card-title>
             <v-list-item-avatar color="grey darken-3">
-              <v-img
-                class="elevation-6"
-                alt="Imagem avatar"
-                :src="conversa.avatar"
-              ></v-img>
+              <v-img class="elevation-6" alt="Imagem avatar" :src="conversa.avatar"></v-img>
             </v-list-item-avatar>
             <span class="text-h6 font-weight-light">{{ conversa.nome }}</span>
           </v-card-title>
@@ -99,7 +85,7 @@ export default {
       true,
       this.avatarWoman,
       this.nomeAssistenteVirtual,
-      `Ola! Eu sou a ${this.nomeAssistenteVirtual}, serei a sua assistente virtual.`,
+      `Olá! Eu sou a ${this.nomeAssistenteVirtual}, serei a sua assistente virtual.`,
       1000
     );
     this.adicionarChatBox(
@@ -138,14 +124,17 @@ export default {
         this.scroll();
       }, time);
     },
-    onEnter: function () {
-      !!this.message && this.send();
+    onEnter() {
+      if (this.message) {
+        this.send();
+      }
     },
     send() {
       this.loading = true;
       const mensagemUsuario = this.message;
-      this.podeEscrever &&
+      if (this.podeEscrever) {
         this.adicionarChatBox(false, this.avatarBot, "Você", this.message, 0);
+      }
       this.podeEscrever = false;
       this.disabled = true;
       this.message = "";
@@ -160,11 +149,11 @@ export default {
       switch (true) {
         case this.ultimaPergunta.includes("nome"):
           primeiraMsgUsuario = `${mensagemUsuario}.. que nome lindo!`;
-          proximaMsgUsuario = "Qual sua idade?";
+          proximaMsgUsuario = "Qual a sua idade?";
           proximaPergunta = "idade";
           break;
         case this.ultimaPergunta.includes("idade"):
-          primeiraMsgUsuario = `${mensagemUsuario}.. Esta na flor da idade!`;
+          primeiraMsgUsuario = `${mensagemUsuario}.. está na flor da idade!`;
           proximaMsgUsuario = "Você estuda alguma coisa?";
           proximaPergunta = "estudo";
           break;
@@ -190,7 +179,7 @@ export default {
           break;
         default:
           primeiraMsgUsuario =
-            "Não entendi, poderia repetir novamente com outras palavaras para que eu possa lhe ajudar.";
+            "Não entendi, poderia repetir novamente com outras palavras para que eu possa lhe ajudar.";
           break;
       }
       this.ultimaPergunta = proximaPergunta;
@@ -202,7 +191,6 @@ export default {
         1000
       );
       if (proximaPergunta && proximaMsgUsuario) {
-        console.log(proximaPergunta);
         this.adicionarChatBox(
           true,
           this.avatarWoman,
